@@ -2,7 +2,7 @@
 @EndUserText.label: 'Travel root entity'
 @Metadata.ignorePropagatedAnnotations: true
 define root view entity ZTRAVEL_R_C326
-  as select from z346_travel_gv_a
+  as select from ztravel_c326_a
 
   association [0..1] to /DMO/I_Agency            as _Agency        on $projection.AgencyID = _Agency.AgencyID
   association [0..1] to /DMO/I_Customer          as _Customer      on $projection.CustomerID = _Customer.CustomerID

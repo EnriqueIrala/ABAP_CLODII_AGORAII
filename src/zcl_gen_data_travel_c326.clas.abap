@@ -11,7 +11,8 @@ ENDCLASS.
 
 
 
-CLASS zcl_gen_data_travel_c326 IMPLEMENTATION.
+CLASS ZCL_GEN_DATA_TRAVEL_C326 IMPLEMENTATION.
+
 
   METHOD if_oo_adt_classrun~main.
 
@@ -48,5 +49,4 @@ CLASS zcl_gen_data_travel_c326 IMPLEMENTATION.
 
 
   ENDMETHOD.
-
 ENDCLASS.

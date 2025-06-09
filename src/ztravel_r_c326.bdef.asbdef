@@ -1,0 +1,91 @@
+managed implementation in class zbp_travel_r_c326 unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZTRAVEL_R_C326 alias Travel
+persistent table ztravel_c326_a
+draft table ztravel_c326_d
+lock master
+total etag LastChangedAt
+etag master LocalLastChangedAt
+authorization master ( global, instance )
+
+{
+  create;
+  update;
+  delete;
+
+  field ( numbering : managed, readonly ) TravelUUID;
+
+  field ( readonly ) TravelID,
+  OverallStatus,
+  TotalPrice,
+  LastChangedAt,
+  LocalCreatedAt,
+  LocalCreatedBy,
+  LocalLastChangedBy;
+
+  field ( features : instance ) BookingFee;
+
+  field ( mandatory ) CustomerID, AgencyID, BeginDate, EndDate, CurrencyCode;
+
+  action ( features : instance, authorization : update ) acceptTravel result [1] $self;
+  action ( features : instance, authorization : update ) rejectTravel result [1] $self;
+
+  action ( features : instance, authorization : update ) deductDiscount
+    parameter Ztravel_AE_Dis_C326 result [1] $self;
+
+  internal action reCalcTotalPrice;
+
+  validation validateCustomer on save { create; field CustomerID; }
+  validation validateAgency on save { create; field AgencyID; }
+  validation validateDateRange on save { create; field BeginDate, EndDate; }
+
+  determination setTravelNumber on save { create; }
+  determination setStatusToOpen on modify { create; }
+  determination calculateTotalPrice on modify { create; field BookingFee, CurrencyCode; }
+
+  determine action validateCustomerID { validation validateCustomer; }
+  determine action validateAgencyID { validation validateAgency; }
+  determine action validateDates { validation validateDateRange; }
+
+  side effects
+  {
+    field BookingFee affects field TotalPrice;
+    determine action validateCustomerID executed on field CustomerID affects messages;
+    determine action validateAgencyID executed on field AgencyID affects messages;
+    determine action validateDates executed on field BeginDate, field EndDate affects messages;
+  }
+
+  draft action Resume;
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+
+  draft determine action Prepare
+  {
+    validation validateCustomer;
+    validation validateAgency;
+    validation validateDateRange;
+  }
+
+  mapping for ztravel_c326_a
+    {
+      traveluuid         = travel_uuid;
+      travelid           = travel_id;
+      agencyid           = agency_id;
+      customerid         = customer_id;
+      begindate          = begin_date;
+      enddate            = end_date;
+      bookingfee         = booking_fee;
+      totalprice         = total_price;
+      currencycode       = currency_code;
+      description        = description;
+      overallstatus      = overall_status;
+      localcreatedby     = local_created_by;
+      localcreatedat     = local_created_at;
+      locallastchangedby = local_last_changed_by;
+      locallastchangedat = local_last_changed_at;
+      lastchangedat      = last_changed_at;
+    }
+}

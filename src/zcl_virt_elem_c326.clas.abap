@@ -11,7 +11,8 @@ ENDCLASS.
 
 
 
-CLASS zcl_virt_elem_c326 IMPLEMENTATION.
+CLASS ZCL_VIRT_ELEM_C326 IMPLEMENTATION.
+
 
   METHOD if_sadl_exit_calc_element_read~calculate.
 
@@ -26,6 +27,7 @@ CLASS zcl_virt_elem_c326 IMPLEMENTATION.
     ct_calculated_data = CORRESPONDING #( lt_original_data ).
 
   ENDMETHOD.
+
 
   METHOD if_sadl_exit_calc_element_read~get_calculation_info.
 
@@ -43,5 +45,4 @@ CLASS zcl_virt_elem_c326 IMPLEMENTATION.
     ENDCASE.
 
   ENDMETHOD.
-
 ENDCLASS.
