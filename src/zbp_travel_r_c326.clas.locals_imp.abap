@@ -1,6 +1,13 @@
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
 
+    CONSTANTS:
+      BEGIN OF travel_status,
+        open     TYPE c LENGTH 1 VALUE 'O', "Open
+        accepted TYPE c LENGTH 1 VALUE 'A', "Accepted
+        rejeted  TYPE c LENGTH 1 VALUE 'X', "Rejeted
+      END OF travel_status.
+
     METHODS get_instance_features FOR INSTANCE FEATURES
       IMPORTING keys REQUEST requested_features FOR Travel RESULT result.
 
@@ -54,6 +61,25 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD acceptTravel.
+
+    "EML - Entity Manipulation Languaje
+    MODIFY ENTITIES OF ztravel_r_c326 IN LOCAL MODE
+    ENTITY Travel
+    UPDATE
+    FIELDS ( OverallStatus )
+    WITH  VALUE #( FOR key IN keys ( %tky = key-%tky
+                                     OverallStatus = travel_status-accepted ) ).
+
+    READ ENTITIES OF ztravel_r_c326 IN LOCAL MODE
+    ENTITY Travel
+    ALL FIELDS
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(travels).
+
+    result = VALUE #( FOR travel IN travels ( %tky = travel-%tky
+                                              %param = travel ) ).
+
+
   ENDMETHOD.
 
   METHOD deductDiscount.
@@ -63,6 +89,23 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rejectTravel.
+
+    "EML - Entity Manipulation Languaje
+    MODIFY ENTITIES OF ztravel_r_c326 IN LOCAL MODE
+    ENTITY Travel
+    UPDATE
+    FIELDS ( OverallStatus )
+    WITH  VALUE #( FOR key IN keys ( %tky = key-%tky
+                                     OverallStatus = travel_status-rejeted ) ).
+
+    READ ENTITIES OF ztravel_r_c326 IN LOCAL MODE
+    ENTITY Travel
+    ALL FIELDS
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(travels).
+
+    result = VALUE #( FOR travel IN travels ( %tky = travel-%tky
+                                              %param = travel ) ).
   ENDMETHOD.
 
   METHOD calculateTotalPrice.
